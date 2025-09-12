@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
 const register = async (req, res) => {
-    const { name, email, password } = req.body;
+    const { name, email, password, district } = req.body;
 
     try {
         const existingUser = await User.findOne({ email });
@@ -12,7 +12,7 @@ const register = async (req, res) => {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new User({ name, email, password: hashedPassword });
+        const newUser = new User({ name, email, password: hashedPassword, district });
         await newUser.save();
 
         res.status(201).json({ message: 'User registered successfully' });
@@ -35,7 +35,7 @@ const login = async (req, res) => {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ id: user._id, district: user.district }, process.env.JWT_SECRET, { expiresIn: '1h' });
         res.json({ token });
     } catch (error) {
         res.status(500).json({ message: 'Server error' });

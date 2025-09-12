@@ -25,6 +25,11 @@ const complaintSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now
+    },
+    district: {
+        type: String,
+        ref: 'District',
+        required: true,
     }
 });
 
