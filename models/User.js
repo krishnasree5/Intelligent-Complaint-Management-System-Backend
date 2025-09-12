@@ -14,6 +14,11 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    district: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'District',
+        required: true,
+    },
 }, { timestamps: true });
 
 export default mongoose.model('User', userSchema);
