@@ -3,7 +3,8 @@ import Complaint from "../models/Complaint.js";
 // Submit a complaint
 export const submitComplaint = async (req, res) => {
   const { title, description, location } = req.body;
-  const userId = req.user; // Get userId from the authenticated user
+  const userId = req.user.id; // Get userId from the authenticated user
+  const district = req.user.district; // Get district from the authenticated user
 
   try {
     const newComplaint = new Complaint({
@@ -13,6 +14,7 @@ export const submitComplaint = async (req, res) => {
       location,
       status: "Pending",
       createdAt: new Date(),
+      district,
     });
 
     const savedComplaint = await newComplaint.save();
@@ -26,7 +28,7 @@ export const submitComplaint = async (req, res) => {
 
 // Get all complaints for the logged-in user
 export const getUserComplaints = async (req, res) => {
-  const userId = req.user;
+  const userId = req.user.id;
 
   try {
     const complaints = await Complaint.find({ userId });
