@@ -27,7 +27,7 @@ const complaintSchema = new mongoose.Schema({
         default: Date.now
     },
     district: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref: 'District',
         required: true,
     }

@@ -15,8 +15,7 @@ const userSchema = new mongoose.Schema({
         required: true,
     },
     district: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'District',
+        type: String,
         required: true,
     },
 }, { timestamps: true });
