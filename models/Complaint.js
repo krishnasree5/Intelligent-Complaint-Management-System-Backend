@@ -30,6 +30,14 @@ const complaintSchema = new mongoose.Schema({
         type: String,
         ref: 'District',
         required: true,
+    },
+    urgencyScore: {
+        type: Number,
+        default: 0
+    },
+    urgencyLevel: {
+        type: String,
+        default: 'Low'
     }
 });
 
