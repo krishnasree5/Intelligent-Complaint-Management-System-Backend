@@ -1,44 +1,77 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const complaintSchema = new mongoose.Schema({
-    userId: {
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: "User",
+  },
+  title: {
+    type: String,
+    required: true,
+  },
+  description: {
+    type: String,
+    required: true,
+  },
+  location: {
+    type: String,
+    required: true,
+  },
+  district: {
+    type: String,
+    ref: "District",
+    required: true,
+  },
+  assignedTo: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Staff",
+  },
+  status: {
+    type: String,
+    enum: [
+      "pending",
+      "assigned",
+      "in_progress",
+      "resolved",
+      "closed",
+      "reopened",
+    ],
+    default: "pending",
+  },
+  notes: [
+    {
+      text: String,
+      by: {
         type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref: 'User'
-    },
-    title: {
-        type: String,
-        required: true
-    },
-    description: {
-        type: String,
-        required: true
-    },
-    location: {
-        type: String,
-        required: true
-    },
-    status: {
-        type: String,
-        default: 'Pending'
-    },
-    createdAt: {
+        ref: "Staff",
+      },
+      createdAt: {
         type: Date,
-        default: Date.now
+        default: Date.now,
+      },
     },
-    district: {
-        type: String,
-        ref: 'District',
-        required: true,
-    },
-    urgencyScore: {
-        type: Number,
-        default: 0
-    },
-    urgencyLevel: {
-        type: String,
-        default: 'Low'
-    }
+  ],
+  resolvedAt: {
+    type: Date,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  urgencyScore: {
+    type: Number,
+    default: 0,
+  },
+  urgencyLevel: {
+    type: String,
+    default: "Low",
+  },
+  tfidfVector: {
+    type: Map,
+    of: Number,
+    default: {},
+  },
 });
 
-export default mongoose.model('Complaint', complaintSchema);
+export default mongoose.model("Complaint", complaintSchema);
