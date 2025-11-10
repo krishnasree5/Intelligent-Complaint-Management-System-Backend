@@ -15,6 +15,10 @@ const adminSchema = new mongoose.Schema({
     unique: true,
     trim: true,
   },
+  password: {
+    type: String,
+    required: true,
+  },
   district: {
     type: String,
     ref: "District",
