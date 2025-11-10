@@ -16,7 +16,7 @@ const staffSchema = new mongoose.Schema({
     trim: true,
   },
   district: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: "District",
     required: true,
   },
