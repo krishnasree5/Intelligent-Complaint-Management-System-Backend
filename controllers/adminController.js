@@ -49,7 +49,7 @@ export const addStaff = async (req, res) => {
 export const getComplaintsByDistrict = async (req, res) => {
   try {
     const adminDistrict = req.admin.district;
-    const complaints = await Complaint.find({ district: adminDistrict });
+    const complaints = await Complaint.find({ district: adminDistrict }).populate('userId','name phoneNumber');
     res.status(200).json(complaints);
   } catch (error) {
     console.error("Error fetching complaints by district:", error);
