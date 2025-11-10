@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 // MongoDB connection
-dbConfig();
+await dbConfig();
 
 // Routes
 app.use("/api/auth", authRoutes);
