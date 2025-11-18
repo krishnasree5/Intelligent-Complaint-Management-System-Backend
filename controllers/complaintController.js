@@ -1,4 +1,6 @@
 import Complaint from "../models/Complaint.js";
+import axios from "axios";
+import "dotenv/config";
 
 // Submit a complaint
 export const submitComplaint = async (req, res) => {
@@ -13,27 +15,32 @@ export const submitComplaint = async (req, res) => {
   }
 
   try {
-    // --- Placeholder for Duplicate Detection Microservice ---
-    // const isDuplicate = await axios.post('http://duplicate-detection-service/check', {
-    //   title,
-    //   description,
-    //   district,
-    // });
-    // if (isDuplicate.data.isDuplicate) {
-    //   return res.status(409).json({
-    //     message: 'A similar complaint has already been submitted.',
-    //     duplicateComplaintId: isDuplicate.data.complaintId,
-    //   });
-    // }
-
-    // --- Placeholder for Urgency Scoring Microservice ---
-    // const urgencyScoreResponse = await axios.post('http://urgency-scoring-service/score', {
-    //   title,
-    //   description,
-    //   district,
-    // });
-    // const urgencyScore = urgencyScoreResponse.data.score;
-
+    const existingComplaints = await Complaint.find({}, "description").lean();
+    const duplicateCheckPayload = {
+      text: description,
+      existing_complaints: existingComplaints.map((comp) => ({
+        id: comp._id.toString(),
+        text: comp.description,
+      })),
+    };
+    const duplicateDetectionResponse = await axios.post(
+      process.env.DUPLICATE_DETECTION_SERVICE_URL + "/check",
+      duplicateCheckPayload
+    );
+    if (duplicateDetectionResponse.data.is_duplicate) {
+      return res.status(409).json({
+        message: "A similar complaint has already been submitted.",
+        duplicateComplaintId: duplicateDetectionResponse.data.matched_id,
+      });
+    }
+    const urgencyPredictionResponse = await axios.post(
+      process.env.URGENCY_SERVICE_URL + "/predict",
+      {
+        Complaint: description,
+        Location: location,
+      }
+    );
+    const urgencyLevel = urgencyPredictionResponse.data.Urgency;
     const newComplaint = new Complaint({
       userId,
       title,
@@ -43,6 +50,7 @@ export const submitComplaint = async (req, res) => {
       status: "pending", // Ensure status defaults to pending
       tfidfVector: {}, // Initialize empty for now, microservice will populate
       urgencyScore: 0, // Initialize to 0 for now, microservice will populate
+      urgencyLevel: urgencyLevel,
       createdAt: new Date(),
     });
 
